@@ -36,52 +36,35 @@ export class App extends Component<{}, AppState> {
   };
 
   sortAlphabetically = (): void => {
-    // Always start with the original goods for any sorting operation
-    let sortedGoods = [...goodsFromServer].sort((a, b) => a.localeCompare(b));
-
-    // Apply reverse if needed
-    if (this.state.isReversed) {
-      sortedGoods = sortedGoods.reverse();
-    }
+    const { isReversed } = this.state;
+    const sortedGoods = [...goodsFromServer].sort((a, b) => a.localeCompare(b));
 
     this.setState({
-      goods: sortedGoods,
+      goods: isReversed ? sortedGoods.reverse() : sortedGoods,
       sortType: SortType.ALPHABETICALLY,
+      // Don't reset isReversed here to maintain the reverse state
     });
   };
 
   sortByLength = (): void => {
-    // Always start with the original goods for any sorting operation
-    let sortedGoods = [...goodsFromServer].sort((a, b) => a.length - b.length);
-
-    // Apply reverse if needed
-    if (this.state.isReversed) {
-      sortedGoods = sortedGoods.reverse();
-    }
+    const { isReversed } = this.state;
+    const sortedGoods = [...goodsFromServer].sort(
+      (a, b) => a.length - b.length,
+    );
 
     this.setState({
-      goods: sortedGoods,
+      goods: isReversed ? sortedGoods.reverse() : sortedGoods,
       sortType: SortType.BY_LENGTH,
+      // Don't reset isReversed here to maintain the reverse state
     });
   };
 
   reverse = (): void => {
-    const { goods, sortType, isReversed } = this.state;
-
-    // Just reverse the current array
-    const reversedGoods = [...goods].reverse();
-
-    // Toggle the reverse flag
-    const newIsReversed = !isReversed;
-
-    // If we're toggling off reverse and have no sort type, reset to original
-    if (!newIsReversed && sortType === null) {
-      return this.reset();
-    }
+    const { goods, isReversed } = this.state;
 
     this.setState({
-      goods: reversedGoods,
-      isReversed: newIsReversed,
+      goods: [...goods].reverse(),
+      isReversed: !isReversed,
     });
   };
 
@@ -102,7 +85,9 @@ export class App extends Component<{}, AppState> {
         <div className="buttons">
           <button
             type="button"
-            className={`button is-info ${sortType === SortType.ALPHABETICALLY ? '' : 'is-light'}`}
+            className={`button is-info ${
+              sortType === SortType.ALPHABETICALLY ? '' : 'is-light'
+            }`}
             onClick={this.sortAlphabetically}
             data-cy="SortAlphabetically"
           >
@@ -111,7 +96,9 @@ export class App extends Component<{}, AppState> {
 
           <button
             type="button"
-            className={`button is-success ${sortType === SortType.BY_LENGTH ? '' : 'is-light'}`}
+            className={`button is-success ${
+              sortType === SortType.BY_LENGTH ? '' : 'is-light'
+            }`}
             onClick={this.sortByLength}
             data-cy="SortByLength"
           >
